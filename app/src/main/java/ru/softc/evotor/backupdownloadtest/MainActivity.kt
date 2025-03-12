@@ -23,13 +23,13 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.editText.setText("4180bb8d-61c2-419d-baa3-a6691b752ef5")
+        binding.editText.setText("http://debt.evotor.tech/backup/2f5bef96-31ba-4098-8c70-97a4c989e985.bin.gz")
 
-        binding.buttonBackupDownload.setOnClickListener {
+        binding.buttonDownload.setOnClickListener {
             binding.progressBar.isVisible = true
             thread {
                 try {
-                    getBackup(binding.editText.text.toString())
+                    downloadFile(binding.editText.text.toString())
                 } catch (e: Exception) {
                     runOnUiThread {
                         //Toast.makeText(this, e.message, Toast.LENGTH_SHORT).show()
@@ -43,8 +43,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun getBackup(uuid: String) {
-        val response = ServerAPI.API.getBackup(uuid, true).execute()
+    private fun downloadFile(url: String) {
+        val response = ServerAPI.API.downloadFile(url).execute()
 
         if (!response.isSuccessful) {
             throw RuntimeException("${response.code() }: ${response.message()}")
@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity() {
 
         val body = requireNotNull(response.body()) { "Пустое тело ответа" }
 
-        val tempFile = File(getExternalFilesDir(null), "$uuid.bin.gz")
+        val tempFile = File(getExternalFilesDir(null), "download.bin")
 
         body.byteStream().use { fis ->
             FileOutputStream(tempFile).use { fos ->

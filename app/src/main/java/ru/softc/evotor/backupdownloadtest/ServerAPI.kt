@@ -12,11 +12,8 @@ import java.util.concurrent.TimeUnit
 interface ServerAPI {
 
     @Streaming
-    @GET("backup/{uuid}")
-    fun getBackup(
-        @Path("uuid") uuid: String,
-        @Query("gzip") gzip: Boolean
-    ): Call<ResponseBody>
+    @GET
+    fun downloadFile(@Url fileUrl: String): Call<ResponseBody>
 
     companion object {
         val BASE_URL = "http://debt.evotor.tech/api/device/"
