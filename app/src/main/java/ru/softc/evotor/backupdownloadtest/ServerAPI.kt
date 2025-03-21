@@ -15,6 +15,10 @@ interface ServerAPI {
     @GET
     fun downloadFile(@Url fileUrl: String): Call<ResponseBody>
 
+    @Streaming
+    @GET
+    fun downloadFileWithRange(@Url fileUrl: String, @Header("Range") range: String): Call<ResponseBody>
+
     companion object {
         val BASE_URL = "http://debt.evotor.tech/api/device/"
 
@@ -24,7 +28,7 @@ interface ServerAPI {
             .writeTimeout(60, TimeUnit.SECONDS)
             .readTimeout(200, TimeUnit.SECONDS)
             .connectTimeout(15, TimeUnit.SECONDS)
-            .build();
+            .build()
 
         val retrofit = Retrofit.Builder()
             .baseUrl(BASE_URL)

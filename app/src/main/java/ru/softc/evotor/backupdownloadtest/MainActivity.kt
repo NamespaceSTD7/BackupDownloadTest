@@ -2,16 +2,12 @@ package ru.softc.evotor.backupdownloadtest
 
 import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import ru.softc.evotor.backupdownloadtest.databinding.ActivityMainBinding
 import java.io.File
 import java.io.FileOutputStream
-import java.util.zip.GZIPInputStream
 import kotlin.concurrent.thread
 
 class MainActivity : AppCompatActivity() {
@@ -23,7 +19,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.editText.setText("http://debt.evotor.tech/backup/2f5bef96-31ba-4098-8c70-97a4c989e985.bin.gz")
+        binding.editText.setText("http://debt-dev.evotor.tech/backup/d83dea37-db82-49ea-a8ff-8b2cf6fc9601.bin.gz")
 
         binding.buttonDownload.setOnClickListener {
             binding.progressBar.isVisible = true
@@ -44,7 +40,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun downloadFile(url: String) {
-        val response = ServerAPI.API.downloadFile(url).execute()
+        val response = if (binding.checkBoxRange.isChecked) {
+            ServerAPI.API.downloadFileWithRange(url, "bytes=0-4194303").execute()
+        } else {
+            ServerAPI.API.downloadFile(url).execute()
+        }
 
         if (!response.isSuccessful) {
             throw RuntimeException("${response.code() }: ${response.message()}")
